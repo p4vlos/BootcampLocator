@@ -2,6 +2,7 @@ package com.pavlosnicolaou.bootcamplocator.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.pavlosnicolaou.bootcamplocator.R;
 public class MainFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private MarkerOptions userMarker;
 
     public MainFragment() {
         // Required empty public constructor
@@ -67,10 +69,22 @@ public class MainFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//        // Add a marker in Sydney and move the camera
+//        LatLng sydney = new LatLng(-34, 151);
+//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    public void setUserMarker(LatLng latLng) {
+
+        if (userMarker == null) {
+            userMarker = new MarkerOptions().position(latLng).title("Current Location");
+            mMap.addMarker(userMarker);
+            Log.v("PAVLOS", "Current location: Lat: " + latLng.latitude + " Long: " + latLng.longitude);
+        }
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
     }
 
 }
