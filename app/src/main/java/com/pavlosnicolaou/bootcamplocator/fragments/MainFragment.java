@@ -11,9 +11,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.pavlosnicolaou.bootcamplocator.R;
+import com.pavlosnicolaou.bootcamplocator.model.Devslopes;
+import com.pavlosnicolaou.bootcamplocator.services.DataService;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -83,8 +88,22 @@ public class MainFragment extends Fragment implements OnMapReadyCallback {
             Log.v("PAVLOS", "Current location: Lat: " + latLng.latitude + " Long: " + latLng.longitude);
         }
 
+        updateMapForZip(92284);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
+    }
+
+    private void updateMapForZip(int postcode) {
+        ArrayList<Devslopes> location = DataService.getInstance().getBootcampLocationsWithin10MilesOfZip(postcode);
+
+        for (int x = 0; x < location.size(); x++) {
+            Devslopes loc = location.get(x);
+            MarkerOptions marker = new MarkerOptions().position(new LatLng(loc.getLatitude(), loc.getLongitude()));
+            marker.title(loc.getLocationTitle());
+            marker.snippet(loc.getLocationAddress());
+            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
+            mMap.addMarker(marker);
+        }
     }
 
 }
