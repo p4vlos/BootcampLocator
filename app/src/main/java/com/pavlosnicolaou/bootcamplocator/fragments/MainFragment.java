@@ -1,11 +1,16 @@
 package com.pavlosnicolaou.bootcamplocator.fragments;
 
+import android.content.Context;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,6 +24,7 @@ import com.pavlosnicolaou.bootcamplocator.model.Devslopes;
 import com.pavlosnicolaou.bootcamplocator.services.DataService;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +35,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private MarkerOptions userMarker;
+    private LocationsListFragment mListFragment;
 
     public MainFragment() {
         // Required empty public constructor
@@ -58,6 +65,38 @@ public class MainFragment extends Fragment implements OnMapReadyCallback {
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        mListFragment = (LocationsListFragment)getActivity().getSupportFragmentManager().findFragmentById(R.id.container_location_list);
+
+        if (mListFragment == null) {
+            mListFragment = LocationsListFragment.newInstance();
+            getActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.container_location_list, mListFragment)
+                    .commit();
+        }
+
+        final EditText zipText = (EditText)view.findViewById(R.id.zip_text);
+        zipText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    //You should make sure this is a valid zip code - check total count and characters
+                    String text = zipText.getText().toString();
+                    int zip = Integer.parseInt(text);
+
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(zipText.getWindowToken(), 0);
+
+                    showList();
+                    updateMapForZip(zip);
+                    return true;
+
+                }
+                return false;
+            }
+        });
+        hideList();
         return view;
     }
 
@@ -88,13 +127,23 @@ public class MainFragment extends Fragment implements OnMapReadyCallback {
             Log.v("PAVLOS", "Current location: Lat: " + latLng.latitude + " Long: " + latLng.longitude);
         }
 
+       // try {
+                    Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                    //List<Address> addresses = geocoder.getFromLocation(latLng.latitude,latLng.longitude, 1);
+                    //int zip = Integer.parseInt(addresses.get(0).getPostalCode());
+                    //updateMapForZip(zip);
+                //} catch (IOException exception){
+
+               // }
+
+
         updateMapForZip(92284);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
     }
 
-    private void updateMapForZip(int postcode) {
-        ArrayList<Devslopes> location = DataService.getInstance().getBootcampLocationsWithin10MilesOfZip(postcode);
+    private void updateMapForZip(int zip) {
+        ArrayList<Devslopes> location = DataService.getInstance().getBootcampLocationsWithin10MilesOfZip(zip);
 
         for (int x = 0; x < location.size(); x++) {
             Devslopes loc = location.get(x);
@@ -104,6 +153,14 @@ public class MainFragment extends Fragment implements OnMapReadyCallback {
             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
             mMap.addMarker(marker);
         }
+    }
+
+    private void hideList() {
+        getActivity().getSupportFragmentManager().beginTransaction().hide(mListFragment).commit();
+    }
+
+    private void showList() {
+        getActivity().getSupportFragmentManager().beginTransaction().show(mListFragment).commit();
     }
 
 }

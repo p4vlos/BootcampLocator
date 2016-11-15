@@ -18,7 +18,7 @@ public class DataService {
 
     }
 
-    public ArrayList<Devslopes> getBootcampLocationsWithin10MilesOfZip(int postcode) {
+    public ArrayList<Devslopes> getBootcampLocationsWithin10MilesOfZip(int zip) {
 
         //pretending we are downloading data from the server
         ArrayList<Devslopes> list = new ArrayList<>();

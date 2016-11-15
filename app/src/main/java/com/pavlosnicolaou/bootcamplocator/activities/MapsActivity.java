@@ -1,4 +1,4 @@
-package com.pavlosnicolaou.bootcamplocator;
+package com.pavlosnicolaou.bootcamplocator.activities;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -17,6 +17,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.pavlosnicolaou.bootcamplocator.R;
 import com.pavlosnicolaou.bootcamplocator.fragments.MainFragment;
 
 public class MapsActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {

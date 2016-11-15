@@ -6,6 +6,12 @@ package com.pavlosnicolaou.bootcamplocator.model;
 
 public class Devslopes {
 
+    final String DRAWABLE = "drawable/";
+
+    public String getImgUrl() {
+        return DRAWABLE + locationImrUrl;
+    }
+
     public String getLocationImrUrl() {
         return locationImrUrl;
     }
